@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
 
 import Login from './screens/Login';
+import Signup from './screens/Signup';
 import Inventory from './screens/Inventory';
 import Grocery from './screens/Grocery';
 import Profile from './screens/Profile';
@@ -97,6 +98,7 @@ export default function App() {
     return (
       <Stack.Navigator>
         <Stack.Screen name='Log in' component={Login} />
+        <Stack.Screen name='Sign up' component={Signup} />
       </Stack.Navigator>
     );
   }

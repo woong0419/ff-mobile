@@ -1,47 +1,53 @@
-import { View, StyleSheet, Text, Button, TextInput } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { View, TextInput, StyleSheet, Button } from 'react-native';
 import { useState } from 'react';
-import { logIn } from '../firebase/emailAuth';
-// import { signInWithGoogle } from '../firebase/googleAuth';
-
+import { useDispatch } from 'react-redux';
 import { userActions } from '../store/userSlice';
 import { inventoryActions } from '../store/inventorySlice';
 import { groceryActions } from '../store/grocerySlice';
 
-function Login({ navigation }) {
+import { createUser } from '../firebase/emailAuth';
+
+function Signup() {
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
 
   const dispatch = useDispatch();
 
-  function SignupButtonHandler() {
-    navigation.navigate('Sign up');
-  }
-
-  async function signinButtonHandler() {
-    await logIn(enteredEmail, enteredPassword)
+  async function signupHandler() {
+    // console.log(enteredEmail, enteredPassword);
+    await createUser(enteredEmail, enteredPassword)
       .then((userCredential) => {
         // Signed in
         const user = {
           token: userCredential.user.accessToken,
           uid: userCredential.user.uid,
         };
-
         // ...
         dispatch(userActions.logIn(user));
         dispatch(inventoryActions.addUser(user.uid));
         dispatch(groceryActions.addUser(user.uid));
-        // ...
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        // ..
       });
+  }
+
+  function updateInputValueHandler(inputType, enteredValue) {
+    switch (inputType) {
+      case 'email':
+        setEnteredEmail(enteredValue);
+        break;
+      case 'password':
+        setEnteredPassword(enteredValue);
+        break;
+    }
   }
 
   return (
     <View>
-      <Text>Login</Text>
       <View>
         <TextInput
           autoCapitalize='none'
@@ -55,13 +61,15 @@ function Login({ navigation }) {
           onChangeText={(newText) => setEnteredPassword(newText)}
           secureTextEntry
         />
+
+        <View>
+          <Button title='Sign up' onPress={signupHandler} />
+        </View>
       </View>
-      <Button title='Sign in' onPress={signinButtonHandler} />
-      <Button title='Sign Up' onPress={SignupButtonHandler} />
     </View>
   );
 }
 
-export default Login;
+export default Signup;
 
 const styles = StyleSheet.create({});
